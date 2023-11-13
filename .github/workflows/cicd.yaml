@@ -15,7 +15,7 @@ jobs:
         os:
           - ubuntu-latest        # x86_64
           - macos-latest         # x86_64
-          # - macos-latest-xlarge  # Apple Silicon
+          - macos-latest-xlarge  # Apple Silicon
     steps:
       - uses: actions/checkout@v4
 
@@ -33,6 +33,7 @@ jobs:
         with:
           name: packages
           path: packages/${{ steps.build.outputs.package }}
+          if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
@@ -53,6 +54,7 @@ jobs:
         with:
           name: packages
           path: packages/${{ steps.build.outputs.package }}
+          if-no-files-found: error
 
   release:
     needs: [build-unix, build-windows]
