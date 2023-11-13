@@ -1,0 +1,20 @@
+name: cookiecutter-cutter
+services:
+  test:
+    build:
+      context: .
+      dockerfile_inline: |
+        # ensure we use debian-based image
+        FROM python:3-slim
+
+        RUN apt-get update \
+          && apt-get install -y zip unzip curl libicu72 make \
+          && curl -LO https://github.com/PowerShell/PowerShell/releases/download/v7.3.9/powershell_7.3.9-1.deb_amd64.deb \
+          && dpkg -i powershell_7.3.9-1.deb_amd64.deb \
+          && apt-get install -f \
+          && rm powershell_7.3.9-1.deb_amd64.deb
+    container_name: cookiecutter-cutter-test
+    working_dir: /app
+    volumes:
+      - .:/app
+    entrypoint: tail -f /dev/null

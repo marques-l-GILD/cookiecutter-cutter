@@ -1,0 +1,73 @@
+name: CI/CD
+
+on: workflow_dispatch
+
+jobs:
+  build-unix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest        # x86_64
+          - macos-latest         # x86_64
+          - macos-latest-xlarge  # Apple Silicon
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Build package
+        id: build
+        shell: bash
+        run: scripts/build.sh
+
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: packages/${{ steps.build.outputs.package }}
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Build package
+        id: build
+        shell: pwsh
+        run: scripts/build.ps1
+
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: packages/${{ steps.build.outputs.package }}
+
+  release:
+    needs: [build-unix, build-windows]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download packages
+        uses: actions/download-artifact@v3
+        with:
+          name: packages
+          path: packages
+
+      - name: Semantic Release
+        id: semantic-release
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          semantic_version: "22.0.7"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
