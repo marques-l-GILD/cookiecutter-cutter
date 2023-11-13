@@ -27,9 +27,10 @@ function Main {
 
   info "Creating virtualenv"
   & $py -m venv build/ccc-py
+  Get-ChildItem -Path build/ccc-py
 
   info "Activating virtualenv"
-  ./build/ccc-py/bin/Activate.ps1 -Prompt "venv:ccc-py"
+  & "./build/ccc-py/bin/Activate.ps1" -Prompt "venv:ccc-py"
 
   try {
     info "Validating virtualenv python installation"
