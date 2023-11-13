@@ -1,6 +1,11 @@
 name: CI/CD
 
-on: workflow_dispatch
+on:
+  push:
+    branches-ignore:
+      - main
+
+  workflow_dispatch:
 
 jobs:
   build-unix:
