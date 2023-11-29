@@ -61,6 +61,16 @@ main() {
     *) die "Unsupported architecture: $(uname -m)" ;;
   esac
 
+  if [ 'darwin' = "$sys" ]; then
+    # the python interpreter installed by github actions is
+    # a fat-binary/universal-binary on macOS
+    #
+    # `universal2` refers to the multi-arch binary format for
+    # x86_64 and arm64, as opposed to the older `universal`
+    # binary format for x86_64 and ppc64le
+    arch='universal2'
+  fi
+
   mkdir -p packages
 
   (cd build && zip -r "../packages/ccc_${sys}_${arch}.zip" ccc-py)

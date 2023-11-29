@@ -58,6 +58,17 @@ function Main {
 
   info "Detecting architecture"
 
+  # we are assuming that powershell is running on windows
+  # even though we can technically run powershell on linux
+  # or macOS.
+  #
+  # note that if you are testing this script on linux or
+  # macOS, you will need to set the PROCESSOR_ARCHITECTURE
+  # environment variable, and that the output archive will
+  # still be named as if it were running on windows. on macOS,
+  # this reported architecure may not reflect the actual
+  # architecture of the python interpreter, in the case that it
+  # is a universal2 build.
   $sys = "windows"
 
   switch ($env:PROCESSOR_ARCHITECTURE) {

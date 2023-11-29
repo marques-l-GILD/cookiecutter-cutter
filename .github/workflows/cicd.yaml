@@ -14,8 +14,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest        # x86_64
-          - macos-latest         # x86_64
-          - macos-latest-xlarge  # Apple Silicon
+          - macos-latest         # universal2 (the python interpreter is universal2)
     steps:
       - uses: actions/checkout@v4
 
