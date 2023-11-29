@@ -30,7 +30,7 @@ main() {
   mkdir -p build
 
   info "Creating virtualenv"
-  "$py" -m venv build/ccc-py
+  "$py" -m venv --copies build/ccc-py
 
   info "Activating virtualenv"
   # shellcheck disable=SC1091
