@@ -79,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: packages
-          path: packages/${{ steps.build.outputs.package }}
+          path: packages/${{ steps.build.outputs.package }}*
           if-no-files-found: error
 
   build-windows:
@@ -101,7 +101,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: packages
-          path: packages/${{ steps.build.outputs.package }}
+          path: packages/${{ steps.build.outputs.package }}*
           if-no-files-found: error
 
   release:

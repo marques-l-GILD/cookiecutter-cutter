@@ -77,11 +77,25 @@ function Main {
     default { die "Unsupported architecture: $env:PROCESSOR_ARCHITECTURE" }
   }
 
+  $package = "ccc_${sys}_${arch}.zip"
   New-Item -ItemType Directory -Force -Path packages
-  Compress-Archive -Path build/ccc-py -DestinationPath "packages/ccc_${sys}_${arch}.zip"
+  Compress-Archive -Path build/ccc-py -DestinationPath "packages/$package"
+
+  # Save the current location
+  Push-Location
+
+  # Change the current directory to 'packages'
+  Set-Location -Path packages
+
+  # Generate SHA256 checksum
+  $hash = Get-FileHash -Path $package -Algorithm SHA256
+  $hash.Hash | Out-File -FilePath "$package.sha256"
+
+  # Return to the original location
+  Pop-Location
 
   if ($env:GITHUB_OUTPUT) {
-    Add-Content -Path $env:GITHUB_OUTPUT -Value "package=ccc_${sys}_${arch}.zip"
+    Add-Content -Path $env:GITHUB_OUTPUT -Value "package=$package"
   }
 }
 

@@ -73,10 +73,21 @@ main() {
 
   mkdir -p packages
 
-  (cd build && zip -r "../packages/ccc_${sys}_${arch}.zip" ccc-py)
+  local package="ccc_${sys}_${arch}.zip"
+
+  (cd build && zip -r "../packages/$package" ccc-py)
+
+  # Generate SHA256 checksum
+  if [ "$sys" = "darwin" ]; then
+    # macOS
+    (cd packages && shasum -a 256 "$package" > "$package.sha256")
+  else
+    # Linux
+    (cd packages && sha256sum "$package" > "$package.sha256")
+  fi
 
   if [ -n "${GITHUB_OUTPUT:-}" ]; then
-    echo "package=ccc_${sys}_${arch}.zip" >> "$GITHUB_OUTPUT"
+    echo "package=$package" >> "$GITHUB_OUTPUT"
   fi
 }
 
