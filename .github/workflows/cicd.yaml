@@ -105,6 +105,7 @@ jobs:
           if-no-files-found: error
 
   release:
+    environment: release
     needs: [build-unix, build-windows]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
