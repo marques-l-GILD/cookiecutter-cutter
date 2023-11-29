@@ -26,7 +26,7 @@ function Main {
   New-Item -ItemType Directory -Force -Path build
 
   info "Creating virtualenv"
-  & $py -m venv build/ccc-py
+  & $py -m venv --copies build/ccc-py
 
   info "Activating virtualenv"
   if (Test-Path -Path build/ccc-py/Scripts/Activate.ps1) {
