@@ -88,7 +88,7 @@ function Main {
 function info {
   [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '')]
   param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$str
   )
   Write-Host -ForegroundColor Green "[INFO ] $str"
@@ -96,7 +96,7 @@ function info {
 
 function die {
   param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$str
   )
   Write-Error "[FATAL] $str"
