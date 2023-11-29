@@ -5,8 +5,59 @@ on:
   workflow_dispatch:
 
 jobs:
+  code-analysis-unix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate shell scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          die() { >&2 printf '\e[31;1m[FATAL] %s\e[0m\n' "$*"; exit 1; }
+          err() { >&2 printf '\e[31;1m[ERROR] %s\e[0m\n' "$*"; }
+
+          failed=n
+
+          for sh in *.sh **/*.sh; do
+            # skip non-files and glob-literals when a glob pattern fails to match
+            [ -f "$sh" ] || continue
+            bash -n "$sh" || { err "Syntax error in $sh"; failed=y; }
+          done
+
+          [ 'n' = "$failed" ] || die "Syntax errors found"
+
+      - name: Run shellcheck
+        run: |
+          set -euo pipefail
+
+          git config --global safe.directory "$PWD"
+
+          git ls-files -z -- *.sh **/*.sh | xargs -0 docker run \
+            -v "$PWD:/mnt" \
+            --workdir /mnt \
+            --rm \
+            koalaman/shellcheck:latest --color
+
+  code-analysis-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse *.ps1 | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName }
+
   build-unix:
     runs-on: ${{ matrix.os }}
+    needs: [code-analysis-unix, code-analysis-windows]
     strategy:
       matrix:
         os:
@@ -33,6 +84,7 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
+    needs: [code-analysis-unix, code-analysis-windows]
     steps:
       - uses: actions/checkout@v4
 
