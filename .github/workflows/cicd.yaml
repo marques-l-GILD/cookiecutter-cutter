@@ -56,6 +56,9 @@ jobs:
     needs: [build-unix, build-windows]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - uses: actions/checkout@v4
         with:
